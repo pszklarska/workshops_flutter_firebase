@@ -11,29 +11,48 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.green,
-        body: StreamBuilder<List<User>>(
-          stream: firebaseClient.getUsers(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
+      home: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.green,
+          body: StreamBuilder<List<User>>(
+            stream: firebaseClient.getUsers(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Loading...');
-            }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('Loading...');
+              }
 
-            return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (context, position) {
-                return ListItem(snapshot.data[position]);
-              },
-            );
-          },
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, position) {
+                  return ListItem(snapshot.data[position]);
+                },
+              );
+            },
+          ),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () => _addNewUser(context),
+          ),
         ),
       ),
     );
+  }
+
+  void _addNewUser(BuildContext context) async {
+    final String username = await showDialog(
+      context: context,
+      builder: (context) => EnterNameDialog(),
+    );
+
+    if (username != null) {
+      final String token = await firebaseClient.getToken();
+      final User user = User(username, token);
+      firebaseClient.saveNewUser(user);
+    }
   }
 }
 
@@ -59,6 +78,45 @@ class ListItem extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class EnterNameDialog extends StatefulWidget {
+  EnterNameDialog({Key key}) : super(key: key);
+
+  @override
+  _EnterNameDialogState createState() => _EnterNameDialogState();
+}
+
+class _EnterNameDialogState extends State<EnterNameDialog> {
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('Enter your name'),
+      content: TextField(
+        controller: _textController,
+        decoration: InputDecoration(hintText: "Name"),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('CANCEL'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        FlatButton(
+          child: Text('OK'),
+          onPressed: () =>
+              Navigator.of(context).pop(_textController.text.toString()),
+        )
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 }
 
