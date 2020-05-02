@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "924694115903",
+    "firebase_url": "https://workshops-e10cf.firebaseio.com",
+    "project_id": "workshops-e10cf",
+    "storage_bucket": "workshops-e10cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924694115903:android:58812dffa537aa9126ea8a",
+        "android_client_info": {
+          "package_name": "com.workshops.workshops_flutter_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924694115903-re4ctqt2o0r81h6r12oap0e93ooh0745.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8n9D6Ke6Sv3_kDlBgpKfPxa80J1nwKJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924694115903-re4ctqt2o0r81h6r12oap0e93ooh0745.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
