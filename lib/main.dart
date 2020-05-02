@@ -1,21 +1,35 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:workshops_flutter_firebase/firebase_client.dart';
 
 void main() => runApp(App());
 
 class App extends StatelessWidget {
-  final List<String> names = ['Mo', 'Jenny', 'Leo', 'Lukas', 'Jack', 'Serena'];
+  final FirebaseClient firebaseClient = FirebaseClient();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.green,
-        body: ListView.builder(
-          itemCount: names.length,
-          itemBuilder: (context, position) {
-            return ListItem(names[position]);
+        body: StreamBuilder<List<User>>(
+          stream: firebaseClient.getUsers(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Loading...');
+            }
+
+            return ListView.builder(
+              itemCount: snapshot.data.length,
+              itemBuilder: (context, position) {
+                return ListItem(snapshot.data[position]);
+              },
+            );
           },
         ),
       ),
@@ -24,9 +38,9 @@ class App extends StatelessWidget {
 }
 
 class ListItem extends StatelessWidget {
-  final String name;
+  final User user;
 
-  ListItem(this.name);
+  ListItem(this.user);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +49,7 @@ class ListItem extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
-          name.toUpperCase(),
+          user.name.toUpperCase(),
           style: TextStyle(
             color: Colors.white,
             fontSize: 34.0,
@@ -46,4 +60,11 @@ class ListItem extends StatelessWidget {
       ),
     );
   }
+}
+
+class User {
+  final String name;
+  final String token;
+
+  User(this.name, this.token);
 }
