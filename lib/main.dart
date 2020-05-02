@@ -28,7 +28,10 @@ class App extends StatelessWidget {
               return ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, position) {
-                  return ListItem(snapshot.data[position]);
+                  return ListItem(
+                    user: snapshot.data[position],
+                    onUserTap: firebaseClient.sendMessage,
+                  );
                 },
               );
             },
@@ -58,23 +61,30 @@ class App extends StatelessWidget {
 
 class ListItem extends StatelessWidget {
   final User user;
+  final Function(String token) onUserTap;
 
-  ListItem(this.user);
+  ListItem({
+    this.user,
+    this.onUserTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-          user.name.toUpperCase(),
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 34.0,
-            fontWeight: FontWeight.bold,
+    return GestureDetector(
+      onTap: () => onUserTap(user.token),
+      child: Container(
+        color: Colors.primaries[Random().nextInt(Colors.primaries.length)],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            user.name.toUpperCase(),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 34.0,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     );

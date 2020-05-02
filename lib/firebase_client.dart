@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:http/http.dart';
+import 'package:workshops_flutter_firebase/firebase_helper.dart';
 
 import 'main.dart';
 
@@ -26,5 +30,21 @@ class FirebaseClient {
 
   Future<String> getToken() {
     return _firebaseMessaging.getToken();
+  }
+
+  void sendMessage(String token) async {
+    final Response response = await post(
+      FirebaseHelper.fcmUrl,
+      body: jsonEncode(FirebaseHelper.getMessageBody(token)),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'key=${FirebaseHelper.serverKey}',
+      },
+    );
+
+    final int statusCode = response.statusCode;
+    if (statusCode < 200 || statusCode > 400) {
+      throw Exception("Error fetching data!");
+    }
   }
 }
