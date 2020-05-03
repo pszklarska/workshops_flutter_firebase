@@ -4,11 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 import 'package:workshops_flutter_firebase/firebase_helper.dart';
+import 'package:workshops_flutter_firebase/player.dart';
 
 import 'main.dart';
 
 class FirebaseClient {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final Player player = Player();
+
+  void init() {
+    _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        player.playSound();
+      },
+    );
+  }
 
   Stream<List<User>> getUsers() {
     return Firestore.instance

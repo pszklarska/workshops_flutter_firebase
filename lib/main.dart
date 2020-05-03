@@ -5,8 +5,19 @@ import 'package:workshops_flutter_firebase/firebase_client.dart';
 
 void main() => runApp(App());
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   final FirebaseClient firebaseClient = FirebaseClient();
+
+  @override
+  void initState() {
+    super.initState();
+    firebaseClient.init();
+  }
 
   @override
   Widget build(BuildContext context) {
