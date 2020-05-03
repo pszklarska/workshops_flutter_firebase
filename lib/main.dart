@@ -3,20 +3,24 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:workshops_flutter_firebase/firebase_client.dart';
 
-void main() => runApp(App());
+void main() => runApp(App(
+  firebaseClient: FirebaseClient(),
+));
 
 class App extends StatefulWidget {
+  final FirebaseClient firebaseClient;
+
+  const App({Key key, this.firebaseClient}) : super(key: key);
+
   @override
   _AppState createState() => _AppState();
 }
 
 class _AppState extends State<App> {
-  final FirebaseClient firebaseClient = FirebaseClient();
-
   @override
   void initState() {
     super.initState();
-    firebaseClient.init();
+    widget.firebaseClient.init();
   }
 
   @override
@@ -26,7 +30,7 @@ class _AppState extends State<App> {
         builder: (context) => Scaffold(
           backgroundColor: Colors.green,
           body: StreamBuilder<List<User>>(
-            stream: firebaseClient.getUsers(),
+            stream: widget.firebaseClient.getUsers(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
@@ -41,7 +45,7 @@ class _AppState extends State<App> {
                 itemBuilder: (context, position) {
                   return ListItem(
                     user: snapshot.data[position],
-                    onUserTap: firebaseClient.sendMessage,
+                    onUserTap: widget.firebaseClient.sendMessage,
                   );
                 },
               );
@@ -63,9 +67,9 @@ class _AppState extends State<App> {
     );
 
     if (username != null) {
-      final String token = await firebaseClient.getToken();
+      final String token = await widget.firebaseClient.getToken();
       final User user = User(username, token);
-      firebaseClient.saveNewUser(user);
+      widget.firebaseClient.saveNewUser(user);
     }
   }
 }
